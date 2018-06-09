@@ -78,16 +78,20 @@ passport.use(new LocalStrategy({
 passport.use(new FacebookStrategy({
     clientID: FACEBOOK_APP_ID,
     clientSecret: FACEBOOK_APP_SECRET,
-    callbackURL: "https://droptheball.herokuapp.com/auth/facebook/callback"
+    callbackURL: "https://droptheball.herokuapp.com/auth/facebook/callback",
+    profileFields: ['id', 'emails', 'name']
   }, (accessToken, refreshToken, profile, done) => {
     console.log("GOt profile", profile);
-    db.collection(USERS_COLLECTION).findOne({email: profile.email}, (err, user) => {
+    db.collection(USERS_COLLECTION).findOne({email: profile.emails[0].value}, (err, user) => {
       if (err) { return done(err); }
 
       if (user) {
         return done(null, user);
       } else {
-        db.collection(USERS_COLLECTION).insert(profile, (err, res) => {
+        db.collection(USERS_COLLECTION).insert({
+          email: profile.emails[0].value,
+          fbProfile: profile,
+        }, (err, res) => {
           return done(err, res)
         })
       }
