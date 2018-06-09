@@ -88,11 +88,13 @@ passport.use(new FacebookStrategy({
       if (user) {
         return done(null, user);
       } else {
-        db.collection(USERS_COLLECTION).insert({
+        user = {
           email: profile.emails[0].value,
           fbProfile: profile,
-        }, (err, res) => {
-          return done(err, res)
+        }
+
+        db.collection(USERS_COLLECTION).insert(user, (err, res) => {
+          return done(err, user)
         })
       }
     })
