@@ -91,6 +91,7 @@ passport.use(new FacebookStrategy({
         user = {
           email: profile.emails[0].value,
           fbProfile: profile,
+          accessToken: accessToken
         }
 
         db.collection(USERS_COLLECTION).insert(user, (err, res) => {
