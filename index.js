@@ -42,10 +42,12 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 passport.serializeUser(function(user, done) {
+  console.log("serializing user", user);
   done(null, user.email);
 });
 
 passport.deserializeUser(function(email, done) {
+  console.log("Deserializing user", email);
   db.collection(USERS_COLLECTION).findOne({email: email},(err, user) => {
     done(err, user);
   });
