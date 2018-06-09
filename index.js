@@ -80,6 +80,7 @@ passport.use(new FacebookStrategy({
     clientSecret: FACEBOOK_APP_SECRET,
     callbackURL: "https://droptheball.herokuapp.com/auth/facebook/callback"
   }, (accessToken, refreshToken, profile, done) => {
+    console.log("GOt profile", profile);
     db.collection(USERS_COLLECTION).findOne({email: profile.email}, (err, user) => {
       if (err) { return done(err); }
 
