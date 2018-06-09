@@ -15,8 +15,8 @@ const MONGO_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/droptheb
 let db;
 const sessionStore = new session.MemoryStore;
 const FacebookStrategy = require('passport-facebook').Strategy
-const FACEBOOK_APP_ID = "138184660387306"
-const FACEBOOK_APP_SECRET = "862c5fe516e57b76146af1dc8516fd94"
+const FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID
+const FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET
 
 
 // Initialize Server
