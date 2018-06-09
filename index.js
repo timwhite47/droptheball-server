@@ -14,8 +14,9 @@ const PUBLIC_PATH = path.join(__dirname, 'public');
 const MONGO_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/droptheball";
 let db;
 const sessionStore = new session.MemoryStore;
-
-
+const FacebookStrategy = require('passport-facebook').Strategy
+const FACEBOOK_APP_ID = "138184660387306"
+const FACEBOOK_APP_SECRET = "862c5fe516e57b76146af1dc8516fd94"
 
 
 // Initialize Server
@@ -80,14 +81,40 @@ passport.use(new LocalStrategy({
   }
 ));
 
+passport.use(new FacebookStrategy({
+    clientID: FACEBOOK_APP_ID,
+    clientSecret: FACEBOOK_APP_SECRET,
+    callbackURL: "https://droptheball.herokuapp.com/auth/facebook/callback"
+  }, (accessToken, refreshToken, profile, done) => {
+    db.collection(USERS_COLLECTION).findOne({email: email}, (err, user) => {
+      if (err) { return done(err); }
+
+      if (user) {
+        return done(null, user);
+      } else {
+        db.collection(USERS_COLLECTION).insert(profile, (err, res) => {
+          return done(err, res)
+        })
+      }
+    })
+  }
+));
+
 // Routes
 app.get('/', (req, res) => res.render('pages/index'))
 app.get('/signup', (req, res) => res.render('pages/signup'))
 app.get('/login', (req, res) => {
   console.log(req.flash('error'));
   return res.render('pages/login')
-
 })
+
+app.get('/auth/facebook', passport.authenticate('facebook'));
+app.get('/auth/facebook/callback',
+  passport.authenticate('facebook', {
+    successRedirect: '/',
+    failureRedirect: '/login',
+  })
+);
 
 app.post('/signup', (req, res, next) => {
   bcrypt.hash(req.body.password, SECRET, (err, password_hash) => {
