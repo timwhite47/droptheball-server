@@ -11,8 +11,8 @@
 POST /login
 
 {
-  "email": "someone@example.website",
-  "password": "HoPefuLLy_SecuRE!",
+  "email": "anna@example.com",
+  "password": "technicolor",
 }
 ```
 
