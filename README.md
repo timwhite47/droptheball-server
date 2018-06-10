@@ -32,3 +32,33 @@ POST /signup
 ```
 GET /auth/facebook
 ```
+
+### Communities
+
+_Create a community_
+```
+POST /communities
+
+** Requires authentication **
+
+{
+  "name": "Your local church group",
+  "description": "church stuffz",
+  "location": "somewhereville, NA"
+}
+```
+
+_Retrieve your communities_
+```
+GET /communities
+```
+
+
+_Join community_
+```
+GET /communities/:id/join
+
+**Requires Authentication**
+
+Current user gets added to community
+```
