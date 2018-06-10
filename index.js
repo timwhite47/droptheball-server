@@ -159,11 +159,28 @@ app.post('/communities', (req, res) => {
 
   let community = req.body;
   community.user = req.user._id;
+  community.members = [req.user._id];
 
   db.collection(COMMUNITIES_COLLECTION).insert(community, (err, doc) => {
       // FIXME: ERROR HANDLING
       return res.json({community: community});
   });
+});
+
+app.get("/communties/:id/join", (req, res) => {
+  if (!req.user) {
+    return res.status(401).send("Not authorized")
+  }
+
+  db.collection(COMMUNITIES_COLLECTION).update(
+     { _id: req.params.id },
+     { $push: { members: req.user._id } },
+     (err, res) => {
+       // FIXME: ERROR HANDLING
+
+       return res.json({status: 'ok'})
+     }
+  );
 });
 
 // Connect DB/Start server
