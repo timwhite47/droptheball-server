@@ -10,6 +10,7 @@ const SECRET = '$2b$10$q82MVIfgk2vREjzYron5vO';
 const LocalStrategy = require('passport-local').Strategy;
 const PORT = process.env.PORT || 5000
 const USERS_COLLECTION = 'users';
+const COMMUNITIES_COLLECTION = 'communities';
 const PUBLIC_PATH = path.join(__dirname, 'public');
 const MONGO_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/droptheball";
 let db;
@@ -104,6 +105,8 @@ passport.use(new FacebookStrategy({
 
 // Routes
 app.get('/', (req, res) => res.render('pages/index'))
+
+// Authentication
 app.get('/signup', (req, res) => res.render('pages/signup'))
 app.get('/login', (req, res) => {
   return res.render('pages/login')
@@ -135,6 +138,33 @@ app.post('/login', passport.authenticate('local', {
   successRedirect: '/',
   failureRedirect: '/login#failure',
 }));
+
+
+// Communities
+app.get('/communities', (req, res) => {
+  if (!req.user) {
+    return res.status(401).send("Not authorized")
+  }
+
+  db.collection(COMMUNITIES_COLLECTION).find({user: req.user._id}).toArray((err, communities) => {
+    // FIXME: ERROR HANDLING
+    return res.json({communities: communities})
+  })
+})
+
+app.post('/communities', (req, res) => {
+  if (!req.user) {
+    return res.status(401).send("Not authorized")
+  }
+
+  let community = req.body;
+  community.user = req.user._id;
+
+  db.collection(COMMUNITIES_COLLECTION).insert(community, (err, doc) => {
+      // FIXME: ERROR HANDLING
+      return res.json({community: community});
+  });
+});
 
 // Connect DB/Start server
 mongodb.MongoClient.connect(MONGO_URI, (err, client) => {
