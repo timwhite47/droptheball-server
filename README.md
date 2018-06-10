@@ -52,3 +52,13 @@ _Retrieve your communities_
 ```
 GET /communities
 ```
+
+
+_Join community_
+```
+GET /communities/:id/join
+
+**Requires Authentication**
+
+Current user gets added to community
+```
